@@ -7,13 +7,23 @@ class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CartBloc, CartState>(builder: (context, state) {
+      int itemCount() {
+        int c = 0;
+        state.cart.forEach((element) {
+          c += element.quantity;
+        });
+        return c;
+      }
+
       return Scaffold(
         appBar: AppBar(
           title: Row(
             children: [
               Icon(Icons.shopping_cart),
               SizedBox(width: 10),
-              Text('Cart'),
+              if (state.cart.length == 0) Text('Cart'),
+              if (state.cart.length > 0)
+                Text('Cart (${itemCount().toString()} items)'),
             ],
           ),
           backgroundColor: Color(0xff2a5c57),
@@ -22,16 +32,24 @@ class CartPage extends StatelessWidget {
           color: Colors.grey[300],
           child: Column(
             children: [
-              Expanded(
-                child: ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  itemCount: state.cart.length,
-                  itemBuilder: (c, i) {
-                    return ProductElement(cart: true, product: state.cart[i]);
-                  },
+              if (state.cart.length > 0)
+                Expanded(
+                  child: ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    itemCount: state.cart.length,
+                    itemBuilder: (c, i) {
+                      return ProductElement(cart: true, product: state.cart[i]);
+                    },
+                  ),
                 ),
-              ),
-              BottomAction()
+              if (state.cart.length == 0)
+                Expanded(
+                    child: Center(
+                        child: Text(
+                  'No Items in cart :(',
+                  style: TextStyle(fontSize: 40),
+                ))),
+              if (state.cart.length > 0) BottomAction()
             ],
           ),
         ),

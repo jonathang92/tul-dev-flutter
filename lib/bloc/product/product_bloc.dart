@@ -16,10 +16,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ) async* {
     if (event is InitProductEvent) {
       // state.products is final
-      final List<Product> p = state.products;
+      final List<Product> p = event.products;
 
-      if (p.length != 0) yield ProductState(products: []);
-      p.addAll(event.products);
       yield state.copyWith(
         products: p,
       );

@@ -4,6 +4,8 @@ import 'package:tul_dev/bloc/cart/cart_bloc.dart';
 import 'package:tul_dev/bloc/product/product_bloc.dart';
 import 'package:tul_dev/pages/cart_page.dart';
 import 'package:tul_dev/pages/home_page.dart';
+import 'package:tul_dev/pages/login_page.dart';
+import 'package:tul_dev/pages/register_page.dart';
 
 void main() => runApp(AppState());
 
@@ -26,6 +28,8 @@ class MyApp extends StatelessWidget {
       home: HomePage(),
       routes: {
         'cart': (context) => CartPage(),
+        'login': (context) => LoginPage(),
+        'register': (context) => RegisterPage(),
       },
     );
   }
