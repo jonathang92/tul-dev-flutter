@@ -1,14 +1,31 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tul_dev/bloc/cart/cart_bloc.dart';
 import 'package:tul_dev/bloc/product/product_bloc.dart';
 import 'package:tul_dev/widgets/product_element.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    bool isLogged = false;
     return BlocBuilder<ProductBloc, ProductState>(
       builder: (context, state) {
+        FirebaseAuth.instance.authStateChanges().listen((User user) {
+          if (user == null) {
+            // print('User is currently signed out!');
+            isLogged = false;
+          } else {
+            // print('User is signed in!');
+            isLogged = true;
+          }
+        });
+
         // get products from Firebase
         final productBloc = BlocProvider.of<ProductBloc>(context);
         productBloc.add(InitProductEvent());
@@ -17,24 +34,31 @@ class HomePage extends StatelessWidget {
             title: Text('Tül-dev'),
             backgroundColor: Color(0xff2a5c57),
             actions: [
-              // ActionButton(
-              //   icon: Icons.logout,
-              //   text: 'Logout',
-              //   action: () => Navigator.pushNamed(context, 'login'),
-              // ),
-              ActionButton(
-                icon: Icons.login,
-                text: 'Login',
-                action: () => Navigator.pushNamed(context, 'login'),
-              ),
-              SizedBox(
-                width: 5,
-              ),
-              ActionButton(
-                icon: Icons.group_add,
-                text: 'Register',
-                action: () => Navigator.pushNamed(context, 'register'),
-              ),
+              if (isLogged)
+                ActionButton(
+                  icon: Icons.logout,
+                  text: 'Logout',
+                  action: () async {
+                    await FirebaseAuth.instance.signOut();
+                    setState(() {});
+                  },
+                ),
+              if (!isLogged)
+                ActionButton(
+                  icon: Icons.login,
+                  text: 'Login',
+                  action: () => Navigator.pushNamed(context, 'login'),
+                ),
+              if (!isLogged)
+                SizedBox(
+                  width: 5,
+                ),
+              if (!isLogged)
+                ActionButton(
+                  icon: Icons.group_add,
+                  text: 'Register',
+                  action: () => Navigator.pushNamed(context, 'register'),
+                ),
               SizedBox(
                 width: 5,
               ),
